@@ -21,7 +21,7 @@ def createaudiochunks(myaudio):
 def audiochunks2specs(chunk_dir):
 	script_file = "wav2sox.sh"
 	shutil.copyfile(script_file, os.path.join(chunk_dir, script_file))
-	wav2sox = subprocess.Popen(["sh", script_file], cwd=chunk_dir)
+	wav2sox = subprocess.Popen(["sh " + script_file], cwd=chunk_dir, shell=True)
 	wav2sox.wait()
 	# crop imgs
 	imgs_dir = os.path.join(chunk_dir, "imgs")
@@ -38,8 +38,8 @@ def checkforbat(model_path, imgs_dir, data):
 		data.loc[idx, "filename"] = this_filename
 		this_feat = convertImgToFeat.img2feat(this_filename)
 		data.loc[idx, "features"] = this_feat
-		runmodel = subprocess.Popen([model_exe, this_feat], cwd=model_path, 
-			stdout=subprocess.PIPE)
+		runmodel = subprocess.Popen([model_exe + " " + this_feat], cwd=model_path, 
+			stdout=subprocess.PIPE, shell=True)
 		while True:
 			line = runmodel.stdout.readline()
 			line = line.decode("utf-8")
@@ -65,7 +65,7 @@ def checkforbat(model_path, imgs_dir, data):
 
 if __name__ == '__main__':
 	#edit:
-	model_path = "/Users/danielrennie/example-standalone-inferencing"
+	model_path = "UPDATE MODEL PATH HERE"
 	#don't edit:
 	myaudio = sys.argv[1]
 	chunk_dir, time_list = createaudiochunks(myaudio)
